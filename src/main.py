@@ -17,6 +17,7 @@ def main():
     # TODO it is unclear why, but the position and size of the window changes (unintended) the first time only s is pressed.
     window.bind("<s>", capture_screen)
     window.bind("<c>", convert_image_to_text)
+    stay_in_focus()
     window.mainloop()
 
 
@@ -43,6 +44,10 @@ def convert_image_to_text(event):
     text_file.write(text)
     text_file.close()
 
+
+def stay_in_focus():
+    window.focus_force()
+    window.after(200, stay_in_focus)
 
 if (__name__ == "__main__"):
     window = tk.Tk()
