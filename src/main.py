@@ -16,7 +16,7 @@ def main():
     window.bind("<r>", change_transparency)
     # TODO it is unclear why, but the position and size of the window changes (unintended) the first time only s is pressed.
     window.bind("<s>", capture_screen)
-    window.bind("<c>", convert_image_to_text)
+    window.bind("<c>", translate_screen_capture)
     stay_in_focus()
     window.mainloop()
 
@@ -36,21 +36,33 @@ def capture_screen(event):
         sct_img = sct.grab(window_size)
         mss.tools.to_png(sct_img.rgb, sct_img.size, output=output)
 
+def translate_screen_capture(event):
+    convert_image_to_text()
+    translate_text()
 
-def convert_image_to_text(event):
-    pass
-    text_file = open("text.txt", "w")
-    text = pytesseract.image_to_string(Image.open("screen_capture.png"))
+def convert_image_to_text():
+    text_file = open("text.txt", "w", encoding='utf-8')
+    text = pytesseract.image_to_string(Image.open("screen_capture.png"), lang="jpn")
     text_file.write(text)
     text_file.close()
 
+def translate_text():
+    print(key)
+    pass
+    
 
 def stay_in_focus():
     window.focus_force()
     window.after(200, stay_in_focus)
 
+def read_api_key():
+    with open("src/apikey.txt") as f:
+        key = f.readline()
+        return key
+
 if (__name__ == "__main__"):
     window = tk.Tk()
     # your path may be different
     pytesseract.pytesseract.tesseract_cmd = "C:\Program Files\Tesseract-OCR\\tesseract.exe"
+    key = read_api_key()
     main()
