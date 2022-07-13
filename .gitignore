@@ -1,6 +1,8 @@
 #my test file :)
 debug.txt
 
+#apikey
+src/apikey.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -36,33 +36,47 @@ def capture_screen(event):
         sct_img = sct.grab(window_size)
         mss.tools.to_png(sct_img.rgb, sct_img.size, output=output)
 
+
 def translate_screen_capture(event):
-    convert_image_to_text()
-    translate_text()
+    text = convert_image_to_text()
+    translate_text(text)
+
 
 def convert_image_to_text():
-    text_file = open("text.txt", "w", encoding='utf-8')
-    text = pytesseract.image_to_string(Image.open("screen_capture.png"), lang="jpn")
-    text_file.write(text)
-    text_file.close()
+    text = pytesseract.image_to_string(
+        Image.open("screen_capture.png"), lang="jpn")
+    return text
 
-def translate_text():
-    print(key)
-    pass
-    
+
+def translate_text(text):
+    print(text)
+    data = {
+        "source_lang": "JA",
+        "target_lang": "EN-US",
+        "auth_key": auth_key,
+        "text": text,
+    }
+    result = requests.post("https://api-free.deepl.com/v2/translate", data=data)
+    print(result.status_code)
+    translation = result.json()["translations"][0]["text"]
+    print(translation)
+    return translation
+
 
 def stay_in_focus():
     window.focus_force()
     window.after(200, stay_in_focus)
 
+
 def read_api_key():
     with open("src/apikey.txt") as f:
-        key = f.readline()
-        return key
+        auth_key = f.readline()
+        return auth_key
+
 
 if (__name__ == "__main__"):
     window = tk.Tk()
     # your path may be different
     pytesseract.pytesseract.tesseract_cmd = "C:\Program Files\Tesseract-OCR\\tesseract.exe"
-    key = read_api_key()
+    auth_key = read_api_key()
     main()
